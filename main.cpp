@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <unistd.h>
+#include <termios.h>
+#include <ncurses.h>
 using namespace std;
 
 void initializeGame();
@@ -30,6 +32,11 @@ int main() {
   initializeGame();
 
   while (true) {
+    initscr();
+    nodelay(stdscr, TRUE);
+    int a = getch();
+    cout << a << endl;
+    endwin();
     drawBoundaries();
     drawSnake();
     getAppleLocation();
