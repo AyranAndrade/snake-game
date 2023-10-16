@@ -10,6 +10,8 @@ void initializeRandomSeed();
 void initializeGameMatrix();
 void initializeSnake();
 void finalizeGame();
+void finalizeGraphicLibrary();
+void finalizeGameMatrix();
 void printGame();
 
 void drawBoundaries();
@@ -21,7 +23,7 @@ void eraseSnake();
 
 void moveSnake(char direction);
 
-void getAppleLocation();
+void generateAppleLocation();
 void sleepForOneSecond();
 char getKeyboardInput();
 
@@ -49,7 +51,7 @@ int main() {
     // }
     moveSnake('d');
     drawSnake();
-    getAppleLocation();
+    generateAppleLocation();
     drawApple();
     printGame();
     sleepForOneSecond();
@@ -99,7 +101,21 @@ void initializeSnake() {
 }
 
 void finalizeGame() {
+  finalizeGraphicLibrary();
+
+  finalizeGameMatrix();
+}
+
+void finalizeGraphicLibrary() {
   endwin();
+}
+
+void finalizeGameMatrix() {
+  for (int i = 0; i < HEIGHT; i++) {
+    free(game[i]);
+  }
+
+  free(game);
 }
 
 void drawBoundaries() {
@@ -134,7 +150,7 @@ void eraseSnake() {
   }
 }
 
-void getAppleLocation() {
+void generateAppleLocation() {
   int i = 0, j = 0;
 
   while (game[i][j] != 0) {
