@@ -11,7 +11,6 @@ void initializeGameMatrix();
 void initializeSnake();
 void finalizeGame();
 void printGame();
-void printUsingGraphicLibrary(const char* message);
 void cleanGame();
 
 void drawBoundaries();
@@ -22,8 +21,8 @@ void getAppleLocation();
 void sleepForOneSecond();
 char getKeyboardInput();
 
-int WIDTH = 20;
-int HEIGHT = 10;
+int WIDTH = 100;
+int HEIGHT = 50;
 int** game;
 
 int snakeSize = 4;
@@ -35,14 +34,6 @@ int appleJ;
 
 int main() {
   initializeGame();
-
-  // printUsingGraphicLibrary("XXXXXXXXXXXXXXXXX");
-  // sleepForOneSecond();
-  // sleepForOneSecond();
-  // sleepForOneSecond();
-  // sleepForOneSecond();
-  // sleepForOneSecond();
-
 
   while (true) {
     // char abc = getKeyboardInput();
@@ -128,8 +119,6 @@ void drawSnake() {
 }
 
 void cleanGame() {
-  system("clear");
-
   game[appleI][appleJ] = 0;
 }
 
@@ -163,21 +152,15 @@ char getKeyboardInput() {
 
 void printGame() {
   for (int i = 0; i < HEIGHT; i++) {
+    move(i, 0);
     for (int j = 0; j < WIDTH; j++) {
       if (game[i][j] == 0) {
         printw("%s", " ");
-        // printUsingGraphicLibrary(" ");
       } else {
         printw("%s", "X");
-        // printUsingGraphicLibrary("X");
       }
     }
   }
 
   refresh();
-}
-
-void printUsingGraphicLibrary(const char* message) {
-  // printw("%s", message);
-  // refresh();
 }
