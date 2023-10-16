@@ -1,22 +1,29 @@
-#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <unistd.h>
 #include <termios.h>
 #include <ncurses.h>
-using namespace std;
 
 void initializeGame();
+void initializeGraphicLibrary();
+void initializeRandomSeed();
+void initializeGameMatrix();
+void initializeSnake();
+void finalizeGame();
 void printGame();
+void printUsingGraphicLibrary(const char* message);
+void cleanGame();
+
 void drawBoundaries();
 void drawApple();
 void drawSnake();
-void cleanGame();
+
 void getAppleLocation();
 void sleepForOneSecond();
+char getKeyboardInput();
 
-int WIDTH = 100;
-int HEIGHT = 50;
+int WIDTH = 20;
+int HEIGHT = 10;
 int** game;
 
 int snakeSize = 4;
@@ -27,16 +34,23 @@ int appleI;
 int appleJ;
 
 int main() {
-  srand((unsigned) time(0));
-
   initializeGame();
 
+  // printUsingGraphicLibrary("XXXXXXXXXXXXXXXXX");
+  // sleepForOneSecond();
+  // sleepForOneSecond();
+  // sleepForOneSecond();
+  // sleepForOneSecond();
+  // sleepForOneSecond();
+
+
   while (true) {
-    initscr();
-    nodelay(stdscr, TRUE);
-    int a = getch();
-    cout << a << endl;
-    endwin();
+    // char abc = getKeyboardInput();
+    // if (abc == 'a') {
+    //   printw("vc digiotu a");
+    // } else if (abc == 'd') {
+    //   printw("vc digitou d");
+    // }
     drawBoundaries();
     drawSnake();
     getAppleLocation();
@@ -45,9 +59,28 @@ int main() {
     sleepForOneSecond();
     cleanGame();
   }
+
+  finalizeGame();
 }
 
 void initializeGame() {
+  initializeGraphicLibrary();
+  initializeRandomSeed();
+  initializeGameMatrix();
+  initializeSnake();
+}
+
+void initializeGraphicLibrary() {
+  initscr();
+  nodelay(stdscr, TRUE);
+  noecho();
+}
+
+void initializeRandomSeed() {
+  srand((unsigned) time(0));
+}
+
+void initializeGameMatrix() {
   game = new int*[HEIGHT];
 
   for (int i = 0; i < HEIGHT; i++) {
@@ -57,13 +90,19 @@ void initializeGame() {
       game[i][j] = 0;
     }
   }
+}
 
+void initializeSnake() {
   snakeHeadI = rand() % (HEIGHT - 5);
   snakeHeadJ = rand() % (WIDTH - 5);
 
   if (snakeHeadJ < 5) {
     snakeHeadJ = 5;
   }
+}
+
+void finalizeGame() {
+  endwin();
 }
 
 void drawBoundaries() {
@@ -118,18 +157,27 @@ void sleepForOneSecond() {
   usleep(1000000);
 }
 
+char getKeyboardInput() {
+  return getch();
+}
+
 void printGame() {
   for (int i = 0; i < HEIGHT; i++) {
-    cout << endl;
-
     for (int j = 0; j < WIDTH; j++) {
       if (game[i][j] == 0) {
-        cout << " ";
+        printw("%s", " ");
+        // printUsingGraphicLibrary(" ");
       } else {
-        cout << "X";
+        printw("%s", "X");
+        // printUsingGraphicLibrary("X");
       }
     }
   }
 
-  cout << endl;
+  refresh();
+}
+
+void printUsingGraphicLibrary(const char* message) {
+  // printw("%s", message);
+  // refresh();
 }
