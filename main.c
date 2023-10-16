@@ -159,10 +159,14 @@ void generateAppleLocation() {
 
     if (i == 0) {
       i++;
+    } else if (i == HEIGHT - 1) {
+      i--;
     }
 
     if (j == 0) {
       j++;
+    } else if (j == WIDTH - 1) {
+      j--;
     }
   }
 
