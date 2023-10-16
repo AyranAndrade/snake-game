@@ -11,11 +11,15 @@ void initializeGameMatrix();
 void initializeSnake();
 void finalizeGame();
 void printGame();
-void cleanGame();
 
 void drawBoundaries();
 void drawApple();
 void drawSnake();
+
+void eraseApple();
+void eraseSnake();
+
+void moveSnake(char direction);
 
 void getAppleLocation();
 void sleepForOneSecond();
@@ -34,6 +38,7 @@ int appleJ;
 
 int main() {
   initializeGame();
+  drawBoundaries();
 
   while (true) {
     // char abc = getKeyboardInput();
@@ -42,13 +47,14 @@ int main() {
     // } else if (abc == 'd') {
     //   printw("vc digitou d");
     // }
-    drawBoundaries();
+    moveSnake('d');
     drawSnake();
     getAppleLocation();
     drawApple();
     printGame();
     sleepForOneSecond();
-    cleanGame();
+    eraseApple();
+    eraseSnake();
   }
 
   finalizeGame();
@@ -118,8 +124,14 @@ void drawSnake() {
   }
 }
 
-void cleanGame() {
+void eraseApple() {
   game[appleI][appleJ] = 0;
+}
+
+void eraseSnake() {
+  for (int b = snakeHeadJ; b > snakeHeadJ - snakeSize; b--) {
+    game[snakeHeadI][b] = 0;
+  }
 }
 
 void getAppleLocation() {
@@ -148,6 +160,20 @@ void sleepForOneSecond() {
 
 char getKeyboardInput() {
   return getch();
+}
+
+void moveSnake(char direction) {
+  if (direction == 'w') {
+    snakeHeadI--;
+  } else if (direction == 'd') {
+    snakeHeadJ++;
+  } else if (direction == 's') {
+    snakeHeadI++;
+  } else if (direction == 'a') {
+    snakeHeadJ--;
+  } else {
+    snakeHeadJ++;
+  }
 }
 
 void printGame() {
