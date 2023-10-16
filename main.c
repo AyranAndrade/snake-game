@@ -1,5 +1,5 @@
-#include <cstdlib>
-#include <ctime>
+#include <time.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
 #include <ncurses.h>
@@ -72,11 +72,11 @@ void initializeRandomSeed() {
 }
 
 void initializeGameMatrix() {
-  game = new int*[HEIGHT];
+  game = malloc(HEIGHT * sizeof(int*));
 
   for (int i = 0; i < HEIGHT; i++) {
 
-    game[i] = new int[WIDTH];
+    game[i] = malloc(WIDTH * sizeof(int));
     for (int j = 0; j < WIDTH; j++) {
       game[i][j] = 0;
     }

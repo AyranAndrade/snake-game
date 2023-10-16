@@ -1,3 +1,1 @@
-reset && g++ *.cpp -o output && ./output
-
-reset && g++ *.cpp -lncurses -o output && ./output
+reset && gcc *.c -lncurses -o output && ./output
