@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <ncurses.h>
+#include <string.h>
 
 void initializeGame();
 void initializeGraphicLibrary();
@@ -13,10 +14,14 @@ void finalizeGame();
 void finalizeGraphicLibrary();
 void finalizeGameMatrix();
 void printGame();
+void printGameOver();
+
+bool checkIfSnakeCollidedWithBoundaries();
 
 void drawBoundaries();
 void drawApple();
 void drawSnake();
+void redrawErasedBoundary();
 
 void eraseApple();
 void eraseSnake();
@@ -24,16 +29,19 @@ void eraseSnake();
 void moveSnake(char direction);
 
 void generateAppleLocation();
-void sleepForOneSecond();
+void sleepInSeconds(float seconds);
 char getKeyboardInput();
 
-int WIDTH = 100;
-int HEIGHT = 50;
+const int WIDTH = 100;
+const int HEIGHT = 50;
 int** game;
 
 int snakeSize = 4;
 int snakeHeadI;
 int snakeHeadJ;
+const float SNAKE_SPEED_IN_SECONDS = 0.1;
+
+const float TIME_AFTER_GAME_OVER_IN_SECONDS = 10;
 
 int appleI;
 int appleJ;
@@ -50,16 +58,24 @@ int main() {
     //   printw("vc digitou d");
     // }
     moveSnake('d');
+
+    if (checkIfSnakeCollidedWithBoundaries()) {
+      finalizeGame();
+      break;
+    }
+
     drawSnake();
+
     generateAppleLocation();
     drawApple();
+
     printGame();
-    sleepForOneSecond();
+
+    sleepInSeconds(SNAKE_SPEED_IN_SECONDS);
+
     eraseApple();
     eraseSnake();
   }
-
-  finalizeGame();
 }
 
 void initializeGame() {
@@ -101,9 +117,21 @@ void initializeSnake() {
 }
 
 void finalizeGame() {
-  finalizeGraphicLibrary();
+  eraseApple();
+  eraseSnake();
 
+  redrawErasedBoundary();
+  printGame();
+  printGameOver();
+
+  sleepInSeconds(TIME_AFTER_GAME_OVER_IN_SECONDS);
+
+  finalizeGraphicLibrary();
   finalizeGameMatrix();
+}
+
+void redrawErasedBoundary() {
+  game[snakeHeadI][snakeHeadJ] = 1;
 }
 
 void finalizeGraphicLibrary() {
@@ -174,8 +202,8 @@ void generateAppleLocation() {
   appleJ = j;
 }
 
-void sleepForOneSecond() {
-  usleep(1000000);
+void sleepInSeconds(float seconds) {
+  usleep(seconds * 1000000);
 }
 
 char getKeyboardInput() {
@@ -194,6 +222,33 @@ void moveSnake(char direction) {
   } else {
     snakeHeadJ++;
   }
+}
+
+bool checkIfSnakeCollidedWithBoundaries() {
+  int snakeTailJ = snakeHeadJ - snakeSize;
+
+  if (snakeHeadI == 0) {
+    return true;
+  } else if (snakeHeadI == HEIGHT - 1) {
+    return true;
+  } else if (snakeHeadJ == 0) {
+    return true;
+  } else if (snakeHeadJ == WIDTH - 1) {
+    return true;
+  } else if (snakeTailJ == 0) {
+    return true;
+  }
+
+  return false;
+}
+
+void printGameOver() {
+  const char* gameOverMessage = "GAME OVER";
+  int i = HEIGHT/2;
+  int j = WIDTH/2 - strlen(gameOverMessage);
+  move(i, j);
+  printw("%s", gameOverMessage);
+  refresh();
 }
 
 void printGame() {
