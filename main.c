@@ -9,7 +9,6 @@ void initializeGame();
 void initializeGraphicLibrary();
 void initializeRandomSeed();
 void initializeGameMatrix();
-void initializeSnake();
 void finalizeGame();
 void finalizeGraphicLibrary();
 void finalizeGameMatrix();
@@ -17,6 +16,7 @@ void printGame();
 void printGameOver();
 
 bool checkIfSnakeCollidedWithBoundaries();
+bool checkIfSnakeAteApple();
 
 void drawBoundaries();
 void drawApple();
@@ -29,6 +29,8 @@ void eraseSnake();
 void moveSnake(char direction);
 
 void generateAppleLocation();
+void generateSnakeLocation();
+
 void sleepInSeconds(float seconds);
 char getKeyboardInput();
 
@@ -40,6 +42,7 @@ int snakeSize = 4;
 int snakeHeadI;
 int snakeHeadJ;
 const float SNAKE_SPEED_IN_SECONDS = 0.1;
+const int HOW_MUCH_SNAKE_INCREASE = 2;
 
 const float TIME_AFTER_GAME_OVER_IN_SECONDS = 10;
 
@@ -49,6 +52,8 @@ int appleJ;
 int main() {
   initializeGame();
   drawBoundaries();
+  generateSnakeLocation();
+  generateAppleLocation();
 
   while (true) {
     // char abc = getKeyboardInput();
@@ -64,16 +69,19 @@ int main() {
       break;
     }
 
-    drawSnake();
+    if (checkIfSnakeAteApple()) {
+      eraseApple();
+      generateAppleLocation();
+      snakeSize += HOW_MUCH_SNAKE_INCREASE;
+    }
 
-    generateAppleLocation();
+    drawSnake();
     drawApple();
 
     printGame();
 
     sleepInSeconds(SNAKE_SPEED_IN_SECONDS);
 
-    eraseApple();
     eraseSnake();
   }
 }
@@ -82,7 +90,6 @@ void initializeGame() {
   initializeGraphicLibrary();
   initializeRandomSeed();
   initializeGameMatrix();
-  initializeSnake();
 }
 
 void initializeGraphicLibrary() {
@@ -107,7 +114,7 @@ void initializeGameMatrix() {
   }
 }
 
-void initializeSnake() {
+void generateSnakeLocation() {
   snakeHeadI = rand() % (HEIGHT - 5);
   snakeHeadJ = rand() % (WIDTH - 5);
 
@@ -236,6 +243,14 @@ bool checkIfSnakeCollidedWithBoundaries() {
   } else if (snakeHeadJ == WIDTH - 1) {
     return true;
   } else if (snakeTailJ == 0) {
+    return true;
+  }
+
+  return false;
+}
+
+bool checkIfSnakeAteApple() {
+  if (snakeHeadI == appleI && snakeHeadJ == appleJ) {
     return true;
   }
 
