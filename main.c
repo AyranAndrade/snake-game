@@ -35,8 +35,8 @@ void generateSnakeLocation();
 void sleepInSeconds(float seconds);
 char getKeyboardInput();
 
-const int WIDTH = 100;
-const int HEIGHT = 50;
+const int WIDTH = 38;
+const int HEIGHT = 23;
 int** game;
 
 int snakeHeadI;
@@ -165,12 +165,12 @@ void finalizeGameMatrix() {
 void drawBoundaries() {
   for (int j = 0; j < WIDTH; j++) {
     game[0][j] = 1;
-    game[HEIGHT - 1][j] = 1;
+    game[HEIGHT - 1][j] = 3;
   }
 
   for (int i = 0; i < HEIGHT; i++) {
     game[i][0] = 1;
-    game[i][WIDTH - 1] = 1;
+    game[i][WIDTH - 1] = 4;
   }
 }
 
