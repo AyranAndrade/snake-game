@@ -44,6 +44,7 @@ int snakeHeadJ;
 int snakeTailI;
 int snakeTailJ;
 bool mustMoveSnakeTail = true;
+bool snakeCollidedWithHimself = false;
 char snakeLastDirection = 'd';
 const float SNAKE_SPEED_IN_SECONDS = 0.1;
 
@@ -61,14 +62,16 @@ int main() {
   while (true) {
     char direction = getKeyboardInput();
 
-    move(51, 0);
-    printw("head %i %i tail %i %i", snakeHeadI, snakeHeadJ, snakeTailI, snakeTailJ);
-
     drawApple();
 
     moveSnake(direction);
 
     mustMoveSnakeTail = true;
+
+    if (snakeCollidedWithHimself) {
+      finalizeGame();
+      break;
+    }
 
     if (checkIfSnakeAteApple()) {
       generateAppleLocation();
@@ -240,7 +243,11 @@ void moveSnakeHead() {
     snakeHeadJ++;
   }
 
-  game[snakeHeadI][snakeHeadJ] = 2;
+  if (game[snakeHeadI][snakeHeadJ] == 2) {
+    snakeCollidedWithHimself = true;
+  } else {
+    game[snakeHeadI][snakeHeadJ] = 2;
+  }
 }
 
 void moveSnakeTail() {
