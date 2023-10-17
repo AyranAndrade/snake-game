@@ -265,8 +265,14 @@ void moveSnakeTail() {
 }
 
 bool isDirectionValid(char direction) {
-  if (direction == 'w' || direction == 's' || direction == 'a' || direction == 'd') {
-    return true;
+  if (snakeLastDirection == 'w' || snakeLastDirection == 's') {
+    if (direction == 'a' || direction == 'd') {
+      return true;
+    }
+  } else if (snakeLastDirection == 'a' || snakeLastDirection == 'd') {
+    if (direction == 's' || direction == 'w') {
+      return true;
+    }
   }
 
   return false;
