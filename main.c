@@ -21,13 +21,13 @@ bool isDirectionValid(char direction);
 
 void drawBoundaries();
 void drawApple();
-void drawSnake();
-void redrawErasedBoundary();
+void drawSnakeInitially();
 
 void eraseApple();
-void eraseSnake();
 
 void moveSnake(char direction);
+void moveSnakeHead();
+void moveSnakeTail();
 
 void generateAppleLocation();
 void generateSnakeLocation();
@@ -39,12 +39,13 @@ const int WIDTH = 100;
 const int HEIGHT = 50;
 int** game;
 
-int snakeSize = 4;
 int snakeHeadI;
 int snakeHeadJ;
+int snakeTailI;
+int snakeTailJ;
+bool mustMoveSnakeTail = true;
 char snakeLastDirection = 'd';
 const float SNAKE_SPEED_IN_SECONDS = 0.1;
-const int HOW_MUCH_SNAKE_INCREASE = 2;
 
 const float TIME_AFTER_GAME_OVER_IN_SECONDS = 10;
 
@@ -60,27 +61,29 @@ int main() {
   while (true) {
     char direction = getKeyboardInput();
 
+    move(51, 0);
+    printw("head %i %i tail %i %i", snakeHeadI, snakeHeadJ, snakeTailI, snakeTailJ);
+
+    drawApple();
+
     moveSnake(direction);
+
+    mustMoveSnakeTail = true;
+
+    if (checkIfSnakeAteApple()) {
+      // eraseApple();
+      generateAppleLocation();
+      mustMoveSnakeTail = false;
+    }
 
     if (checkIfSnakeCollidedWithBoundaries()) {
       finalizeGame();
       break;
     }
 
-    if (checkIfSnakeAteApple()) {
-      eraseApple();
-      generateAppleLocation();
-      snakeSize += HOW_MUCH_SNAKE_INCREASE;
-    }
-
-    drawSnake();
-    drawApple();
-
     printGame();
 
     sleepInSeconds(SNAKE_SPEED_IN_SECONDS);
-
-    eraseSnake();
   }
 }
 
@@ -119,13 +122,22 @@ void generateSnakeLocation() {
   if (snakeHeadJ < 5) {
     snakeHeadJ = 5;
   }
+
+  snakeTailI = snakeHeadI;
+  snakeTailJ = snakeHeadJ - 4;
+
+  drawSnakeInitially();
+}
+
+void drawSnakeInitially() {
+  for (int j = snakeHeadJ; j > snakeTailJ; j--) {
+    game[snakeHeadI][j] = 2;
+  }
 }
 
 void finalizeGame() {
   eraseApple();
-  eraseSnake();
 
-  redrawErasedBoundary();
   printGame();
   printGameOver();
 
@@ -133,10 +145,6 @@ void finalizeGame() {
 
   finalizeGraphicLibrary();
   finalizeGameMatrix();
-}
-
-void redrawErasedBoundary() {
-  game[snakeHeadI][snakeHeadJ] = 1;
 }
 
 void finalizeGraphicLibrary() {
@@ -167,20 +175,8 @@ void drawApple() {
   game[appleI][appleJ] = 1;
 }
 
-void drawSnake() {
-  for (int b = snakeHeadJ; b > snakeHeadJ - snakeSize; b--) {
-    game[snakeHeadI][b] = 1;
-  }
-}
-
 void eraseApple() {
   game[appleI][appleJ] = 0;
-}
-
-void eraseSnake() {
-  for (int b = snakeHeadJ; b > snakeHeadJ - snakeSize; b--) {
-    game[snakeHeadI][b] = 0;
-  }
 }
 
 void generateAppleLocation() {
@@ -220,6 +216,14 @@ void moveSnake(char direction) {
     snakeLastDirection = direction;
   }
 
+  moveSnakeHead();
+
+  if (mustMoveSnakeTail) {
+    moveSnakeTail();
+  }
+}
+
+void moveSnakeHead() {
   if (snakeLastDirection == 'w') {
     snakeHeadI--;
   } else if (snakeLastDirection == 'd') {
@@ -230,6 +234,22 @@ void moveSnake(char direction) {
     snakeHeadJ--;
   } else {
     snakeHeadJ++;
+  }
+
+  game[snakeHeadI][snakeHeadJ] = 2;
+}
+
+void moveSnakeTail() {
+  game[snakeTailI][snakeTailJ] = 0;
+
+  if (game[snakeTailI - 1][snakeTailJ] == 2) {
+    snakeTailI--;
+  } else if (game[snakeTailI + 1][snakeTailJ] == 2) {
+    snakeTailI++;
+  } else if (game[snakeTailI][snakeTailJ - 1] == 2) {
+    snakeTailJ--;
+  } else if (game[snakeTailI][snakeTailJ + 1] == 2) {
+    snakeTailJ++;
   }
 }
 
@@ -242,8 +262,6 @@ bool isDirectionValid(char direction) {
 }
 
 bool checkIfSnakeCollidedWithBoundaries() {
-  int snakeTailJ = snakeHeadJ - snakeSize;
-
   if (snakeHeadI == 0) {
     return true;
   } else if (snakeHeadI == HEIGHT - 1) {
@@ -251,8 +269,6 @@ bool checkIfSnakeCollidedWithBoundaries() {
   } else if (snakeHeadJ == 0) {
     return true;
   } else if (snakeHeadJ == WIDTH - 1) {
-    return true;
-  } else if (snakeTailJ == 0) {
     return true;
   }
 
