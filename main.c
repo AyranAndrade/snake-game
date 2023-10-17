@@ -17,6 +17,7 @@ void printGameOver();
 
 bool checkIfSnakeCollidedWithBoundaries();
 bool checkIfSnakeAteApple();
+bool isDirectionValid(char direction);
 
 void drawBoundaries();
 void drawApple();
@@ -41,6 +42,7 @@ int** game;
 int snakeSize = 4;
 int snakeHeadI;
 int snakeHeadJ;
+char snakeLastDirection = 'd';
 const float SNAKE_SPEED_IN_SECONDS = 0.1;
 const int HOW_MUCH_SNAKE_INCREASE = 2;
 
@@ -56,13 +58,9 @@ int main() {
   generateAppleLocation();
 
   while (true) {
-    // char abc = getKeyboardInput();
-    // if (abc == 'a') {
-    //   printw("vc digiotu a");
-    // } else if (abc == 'd') {
-    //   printw("vc digitou d");
-    // }
-    moveSnake('d');
+    char direction = getKeyboardInput();
+
+    moveSnake(direction);
 
     if (checkIfSnakeCollidedWithBoundaries()) {
       finalizeGame();
@@ -218,17 +216,29 @@ char getKeyboardInput() {
 }
 
 void moveSnake(char direction) {
-  if (direction == 'w') {
+  if (isDirectionValid(direction)) {
+    snakeLastDirection = direction;
+  }
+
+  if (snakeLastDirection == 'w') {
     snakeHeadI--;
-  } else if (direction == 'd') {
+  } else if (snakeLastDirection == 'd') {
     snakeHeadJ++;
-  } else if (direction == 's') {
+  } else if (snakeLastDirection == 's') {
     snakeHeadI++;
-  } else if (direction == 'a') {
+  } else if (snakeLastDirection == 'a') {
     snakeHeadJ--;
   } else {
     snakeHeadJ++;
   }
+}
+
+bool isDirectionValid(char direction) {
+  if (direction == 'w' || direction == 's' || direction == 'a' || direction == 'd') {
+    return true;
+  }
+
+  return false;
 }
 
 bool checkIfSnakeCollidedWithBoundaries() {
