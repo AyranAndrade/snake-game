@@ -23,7 +23,7 @@ void drawBoundaries();
 void drawApple();
 void drawSnakeInitially();
 
-void eraseApple();
+void eraseAllGame();
 
 void moveSnake(char direction);
 void moveSnakeHead();
@@ -71,7 +71,6 @@ int main() {
     mustMoveSnakeTail = true;
 
     if (checkIfSnakeAteApple()) {
-      // eraseApple();
       generateAppleLocation();
       mustMoveSnakeTail = false;
     }
@@ -136,7 +135,8 @@ void drawSnakeInitially() {
 }
 
 void finalizeGame() {
-  eraseApple();
+  eraseAllGame();
+  drawBoundaries();
 
   printGame();
   printGameOver();
@@ -175,8 +175,12 @@ void drawApple() {
   game[appleI][appleJ] = 1;
 }
 
-void eraseApple() {
-  game[appleI][appleJ] = 0;
+void eraseAllGame() {
+  for (int i = 0; i < HEIGHT; i++) {
+    for (int j = 0; j < WIDTH; j++) {
+      game[i][j] = 0;
+    }
+  }
 }
 
 void generateAppleLocation() {
