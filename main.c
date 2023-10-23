@@ -47,6 +47,7 @@ bool mustMoveSnakeTail = true;
 bool snakeCollidedWithHimself = false;
 char snakeLastDirection = 'd';
 const float SNAKE_SPEED_IN_SECONDS = 0.1;
+const int SNAKE_INITIAL_SIZE = 5;
 
 const float TIME_AFTER_GAME_OVER_IN_SECONDS = 10;
 
@@ -127,12 +128,15 @@ void generateSnakeLocation() {
   }
 
   snakeTailI = snakeHeadI;
-  snakeTailJ = snakeHeadJ - 4;
+  snakeTailJ = snakeHeadJ - SNAKE_INITIAL_SIZE + 1;
 }
 
 void drawSnakeInitially() {
-  for (int j = snakeHeadJ; j > snakeTailJ; j--) {
-    game[snakeHeadI][j] = 2;
+  int i = SNAKE_INITIAL_SIZE + 1;
+
+  for (int j = snakeHeadJ; j >= snakeTailJ; j--) {
+    game[snakeHeadI][j] = i;
+    i--;
   }
 }
 
@@ -230,6 +234,8 @@ void moveSnake(char direction) {
 }
 
 void moveSnakeHead() {
+  int currentValue = game[snakeHeadI][snakeHeadJ];
+
   if (snakeLastDirection == 'w') {
     snakeHeadI--;
   } else if (snakeLastDirection == 'd') {
@@ -242,23 +248,26 @@ void moveSnakeHead() {
     snakeHeadJ++;
   }
 
-  if (game[snakeHeadI][snakeHeadJ] == 2) {
+  if (game[snakeHeadI][snakeHeadJ] > 1) {
     snakeCollidedWithHimself = true;
   } else {
-    game[snakeHeadI][snakeHeadJ] = 2;
+    game[snakeHeadI][snakeHeadJ] = currentValue + 1;
   }
 }
 
 void moveSnakeTail() {
+  int currentValue = game[snakeTailI][snakeTailJ];
+  int nextValue = currentValue + 1;
+
   game[snakeTailI][snakeTailJ] = 0;
 
-  if (game[snakeTailI - 1][snakeTailJ] == 2) {
+  if (game[snakeTailI - 1][snakeTailJ] == nextValue) {
     snakeTailI--;
-  } else if (game[snakeTailI + 1][snakeTailJ] == 2) {
+  } else if (game[snakeTailI + 1][snakeTailJ] == nextValue) {
     snakeTailI++;
-  } else if (game[snakeTailI][snakeTailJ - 1] == 2) {
+  } else if (game[snakeTailI][snakeTailJ - 1] == nextValue) {
     snakeTailJ--;
-  } else if (game[snakeTailI][snakeTailJ + 1] == 2) {
+  } else if (game[snakeTailI][snakeTailJ + 1] == nextValue) {
     snakeTailJ++;
   }
 }
