@@ -57,6 +57,7 @@ int main() {
   initializeGame();
   drawBoundaries();
   generateSnakeLocation();
+  drawSnakeInitially();
   generateAppleLocation();
 
   while (true) {
@@ -127,8 +128,6 @@ void generateSnakeLocation() {
 
   snakeTailI = snakeHeadI;
   snakeTailJ = snakeHeadJ - 4;
-
-  drawSnakeInitially();
 }
 
 void drawSnakeInitially() {
