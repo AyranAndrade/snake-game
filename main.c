@@ -164,12 +164,12 @@ void finalizeGameMatrix() {
 void drawBoundaries() {
   for (int j = 0; j < WIDTH; j++) {
     game[0][j] = 1;
-    game[HEIGHT - 1][j] = 3;
+    game[HEIGHT - 1][j] = 1;
   }
 
   for (int i = 0; i < HEIGHT; i++) {
     game[i][0] = 1;
-    game[i][WIDTH - 1] = 4;
+    game[i][WIDTH - 1] = 1;
   }
 }
 
